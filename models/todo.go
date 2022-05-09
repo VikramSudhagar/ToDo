@@ -1,12 +1,10 @@
 package models
 
 import (
-	"time"
+	"gorm.io/gorm"
 )
 
 type Task struct {
-	ID        uint
-	TaskName  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	gorm.Model
+	TaskName string `json:"taskname"`
 }
