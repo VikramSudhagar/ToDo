@@ -46,3 +46,15 @@ func AddTask(taskname string) (*models.Task, error) {
 
 	return task, nil
 }
+
+func DeleteTask(task models.Task) (*models.Task, error) {
+	db := DBConn
+	//delete the task with that specific ID. Every task has
+	//a primary key, so a Batch Delete will not be triggered
+	if err := db.Delete(&task).Error; err != nil {
+		log.Println("Deletion was not successful")
+		return nil, err
+	}
+	log.Println("Deletion was successful")
+	return &task, nil
+}
