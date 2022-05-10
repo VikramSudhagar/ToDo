@@ -59,7 +59,23 @@ func main() {
 
 	//Deleting a Task from the to do list
 	app.Delete("/deleteTask", func(c *fiber.Ctx) error {
-		return c.SendString("value: " + c.Params("value"))
+		var body models.Task
+		if err := c.BodyParser(&body); err != nil {
+			log.Println("There is an error with deletion")
+			return err
+		}
+		tasks, err := database.DeleteTask(body)
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Resource not found",
+			})
+		}
+
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success": true,
+			"data":    tasks,
+		})
 	})
 
 	app.Listen(":3000")
