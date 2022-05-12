@@ -11,7 +11,7 @@ import (
 var DBConn *gorm.DB
 var err error
 
-func SetUp() {
+func TaskSetUp() {
 	dsn := "host=127.0.0.1 user=postgres password=new@co-op222! dbname=todoDB port=5432"
 	DBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err == nil {
@@ -47,14 +47,14 @@ func AddTask(taskname string) (*models.Task, error) {
 	return task, nil
 }
 
-func DeleteTask(task models.Task) (*models.Task, error) {
+func DeleteTask(id string) error {
 	db := DBConn
 	//delete the task with that specific ID. Every task has
 	//a primary key, so a Batch Delete will not be triggered
-	if err := db.Delete(&task).Error; err != nil {
+	if err := db.Delete(&models.User{}, id).Error; err != nil {
 		log.Println("Deletion was not successful")
-		return nil, err
+		return err
 	}
 	log.Println("Deletion was successful")
-	return &task, nil
+	return nil
 }
