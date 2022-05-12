@@ -13,8 +13,9 @@ func main() {
 	app := fiber.New()
 	var todo []models.Task = make([]models.Task, 0)
 	//Get all the tasks to do
-	app.Get("/", func(c *fiber.Ctx) error {
-		database.SetUp()
+	app.Get("/task", func(c *fiber.Ctx) error {
+		database.TaskSetUp()
+		database.UserSetUp()
 		todo = database.GetTasks()
 
 		if c.Response().StatusCode() == 200 {
@@ -25,7 +26,7 @@ func main() {
 	})
 
 	//Adding a Task to the to do list
-	app.Post("/addTask", func(c *fiber.Ctx) error {
+	app.Post("/task", func(c *fiber.Ctx) error {
 		var body models.Task
 		if err := c.BodyParser(&body); err != nil {
 			log.Println("There is an error", err)
@@ -58,13 +59,9 @@ func main() {
 	})
 
 	//Deleting a Task from the to do list
-	app.Delete("/deleteTask", func(c *fiber.Ctx) error {
-		var body models.Task
-		if err := c.BodyParser(&body); err != nil {
-			log.Println("There is an error with deletion")
-			return err
-		}
-		tasks, err := database.DeleteTask(body)
+	app.Delete("/task/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		err := database.DeleteTask(id)
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"success": false,
@@ -74,8 +71,62 @@ func main() {
 
 		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
 			"success": true,
-			"data":    tasks,
+			"message": "Task was deleted",
 		})
+	})
+
+	//Below are the User Endpoints
+	app.Get("/user/:id", func(c *fiber.Ctx) error {
+
+		id := c.Params("id")
+		e, User := database.GetUser(id)
+		if e != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"error":   e,
+			})
+		}
+
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success": true,
+			"user":    User,
+		})
+	})
+
+	app.Post("/addUser", func(c *fiber.Ctx) error {
+		var user models.User
+		if err := c.BodyParser(&user); err != nil {
+			log.Println("Could not add the user")
+		}
+
+		if err := database.AddUser(user); err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "User not found",
+			})
+		} else {
+			return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+				"success": true,
+				"message": "User created successfully",
+			})
+		}
+	})
+
+	app.Delete("/user/delete/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		delete := database.DeleteUser(id)
+		if delete != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Deletion was not successful",
+			})
+		}
+
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success": true,
+			"message": "Deletion was successful",
+		})
+
 	})
 
 	app.Listen(":3000")
