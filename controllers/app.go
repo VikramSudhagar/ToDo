@@ -6,16 +6,36 @@ import (
 	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/jinzhu/copier"
 )
 
 func main() {
 	app := fiber.New()
+	database.TaskSetUp()
+	database.UserSetUp()
+
+	app.Use("/task", basicauth.New(basicauth.Config{
+		Realm: "Forbidden",
+		Authorizer: func(user, pass string) bool {
+			log.Println("In the middleware")
+			currentUser := database.VerifyUser(user, pass)
+			if user == currentUser.Email && pass == currentUser.Password {
+				return true
+			}
+			return false
+		},
+		Unauthorized: func(c *fiber.Ctx) error {
+			return c.SendFile("./unauthorized.html")
+		},
+		ContextUsername: "_user",
+		ContextPassword: "_pass",
+	}))
+
 	var todo []models.Task = make([]models.Task, 0)
 	//Get all the tasks to do
+
 	app.Get("/task", func(c *fiber.Ctx) error {
-		database.TaskSetUp()
-		database.UserSetUp()
 		todo = database.GetTasks()
 
 		if c.Response().StatusCode() == 200 {
@@ -32,8 +52,6 @@ func main() {
 			log.Println("There is an error", err)
 			return err
 		}
-
-		log.Println("Before Create", body.TaskName)
 		if &body == nil {
 			log.Println("The value is nil")
 		}
