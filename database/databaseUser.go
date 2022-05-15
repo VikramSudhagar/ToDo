@@ -21,6 +21,17 @@ func UserSetUp() {
 	}
 }
 
+func VerifyUser(email string, password string) models.User {
+	//Verify whether the email and password exist
+	db := UserDBConn
+	var user models.User = models.User{}
+	err := db.Where("email = ? AND password = ?", email, password).Find(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return user
+	}
+	return user
+}
+
 func GetUser(id string) (error, models.User) {
 	db := UserDBConn
 	var user models.User

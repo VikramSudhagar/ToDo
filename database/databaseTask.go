@@ -25,9 +25,6 @@ func GetTasks() []models.Task {
 	var tasks []models.Task
 	db := DBConn
 	db.Find(&tasks)
-	for _, value := range tasks {
-		log.Println(value)
-	}
 	return tasks
 }
 
