@@ -12,10 +12,11 @@ var DBConn *gorm.DB
 var err error
 
 func TaskSetUp() {
-	dsn := "host=127.0.0.1 user=postgres password=new@co-op222! dbname=todoDB port=5432"
+	dsn := "host=host.docker.internal user=postgres password=mypassword dbname=todoDB port=5432"
 	DBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err == nil {
 		log.Println("DB Connection was successful")
+		DBConn.AutoMigrate(models.Task{})
 	} else {
 		log.Println("The error is: ", err)
 	}

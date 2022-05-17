@@ -3,41 +3,32 @@ package main
 import (
 	"log"
 	"todo/database"
+	"todo/database/cache"
 	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/jinzhu/copier"
 )
 
 func main() {
 	app := fiber.New()
+	cache.CacheSetUp()
 	database.TaskSetUp()
 	database.UserSetUp()
 
-	app.Use("/task", basicauth.New(basicauth.Config{
-		Realm: "Forbidden",
-		Authorizer: func(user, pass string) bool {
-			log.Println("In the middleware")
-			currentUser := database.VerifyUser(user, pass)
-			if user == currentUser.Email && pass == currentUser.Password {
-				return true
-			}
-			return false
-		},
-		Unauthorized: func(c *fiber.Ctx) error {
-			return c.SendFile("./unauthorized.html")
-		},
-		ContextUsername: "_user",
-		ContextPassword: "_pass",
-	}))
+	//ctx will be used for sessions
+	//var ctx = context.Background()
+
+	app.Get("/login", func(c *fiber.Ctx) error {
+		//get the value from body
+		return c.SendString("Hello, World!")
+	})
 
 	var todo []models.Task = make([]models.Task, 0)
 	//Get all the tasks to do
 
 	app.Get("/task", func(c *fiber.Ctx) error {
 		todo = database.GetTasks()
-
 		if c.Response().StatusCode() == 200 {
 			return c.JSON(todo)
 		}
@@ -147,5 +138,5 @@ func main() {
 
 	})
 
-	app.Listen(":3000")
+	app.Listen(":8081")
 }
