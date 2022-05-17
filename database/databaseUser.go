@@ -12,10 +12,11 @@ import (
 var UserDBConn *gorm.DB
 
 func UserSetUp() {
-	dsn := "host=127.0.0.1 user=postgres password=new@co-op222! dbname=todoDB port=5432"
+	dsn := "host=host.docker.internal user=postgres password=mypassword dbname=todoDB port=5432"
 	UserDBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err == nil {
 		log.Println("DB Connection was successful for UserSetUp")
+		UserDBConn.AutoMigrate(models.User{})
 	} else {
 		log.Println("The error is: ", err)
 	}
