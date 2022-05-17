@@ -14,7 +14,7 @@ func main() {
 	app := fiber.New()
 	database.TaskSetUp()
 	database.UserSetUp()
-
+	log.Println("test")
 	app.Use("/task", basicauth.New(basicauth.Config{
 		Realm: "Forbidden",
 		Authorizer: func(user, pass string) bool {
