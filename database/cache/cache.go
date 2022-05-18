@@ -1,15 +1,18 @@
 package cache
 
-import (
-	"github.com/go-redis/redis"
-)
+import "github.com/gofiber/storage/redis"
 
-func CacheSetUp() *redis.Client {
-	var cache = redis.NewClient(&redis.Options{
-		Addr:     "host.docker.internal:6379",
-		Password: "",
-		DB:       0,
+func CacheSetUp() *redis.Storage {
+	store := redis.New(redis.Config{
+		Host:      "host.docker.internal",
+		Port:      6379,
+		Username:  "",
+		Password:  "",
+		URL:       "",
+		Database:  0,
+		Reset:     true,
+		TLSConfig: nil,
 	})
 
-	return cache
+	return store
 }

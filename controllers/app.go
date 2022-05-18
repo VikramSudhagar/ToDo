@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"strconv"
 	"todo/database"
 	"todo/database/cache"
+	"todo/middleware"
 	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,15 +14,34 @@ import (
 
 func main() {
 	app := fiber.New()
-	cache.CacheSetUp()
+	store := cache.CacheSetUp()
 	database.TaskSetUp()
 	database.UserSetUp()
 
-	//ctx will be used for sessions
-	//var ctx = context.Background()
+	app.Get("/welcome", func(c *fiber.Ctx) error {
+		return c.SendString("Welcome")
+	})
 
-	app.Get("/login", func(c *fiber.Ctx) error {
-		//get the value from body
+	app.Post("/login", func(c *fiber.Ctx) error {
+		var user models.User
+		if err := c.BodyParser(&user); err != nil {
+			return err
+		}
+
+		if _, err := database.VerifyUser(user.Email, user.Password); err != nil {
+			return err
+		}
+		//When logging in, the username and password will be stored in redis
+		value := "email: " + user.Email + " password: " + user.Password
+		//TODO: Add a validator function to determine whether a valid email was passed
+		if len(user.Email) == 0 && len(user.Password) == 0 {
+			//The user did not pass any credentials
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"Error":   "Invalid Input",
+			})
+		}
+		store.Set("session", []byte(value), 0)
 		return c.SendString("Hello, World!")
 	})
 
@@ -38,14 +59,22 @@ func main() {
 
 	//Adding a Task to the to do list
 	app.Post("/task", func(c *fiber.Ctx) error {
+		//RetrieveSessionAndVerify we check whether the information in the
+		//session is valid, and will then verify if this user exists in the DB
+		err := middleware.RetrieveSessionAndVerify(store, c)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"Error":   err,
+			})
+		}
+
 		var body models.Task
+		//Check if there was an error with parsing the body of the request
 		if err := c.BodyParser(&body); err != nil {
-			log.Println("There is an error", err)
 			return err
 		}
-		if &body == nil {
-			log.Println("The value is nil")
-		}
+
 		addTask, err := database.AddTask(body.TaskName)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -69,9 +98,21 @@ func main() {
 
 	//Deleting a Task from the to do list
 	app.Delete("/task/:id", func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		err := database.DeleteTask(id)
-		if err != nil {
+		if err := middleware.RetrieveSessionAndVerify(store, c); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"Error":   err,
+			})
+		}
+
+		integer := c.Params("id")
+
+		id, e := strconv.Atoi(integer)
+		if e != nil {
+			return e
+		}
+
+		if err := database.DeleteTask(id); err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"success": false,
 				"message": "Resource not found",
@@ -86,7 +127,6 @@ func main() {
 
 	//Below are the User Endpoints
 	app.Get("/user/:id", func(c *fiber.Ctx) error {
-
 		id := c.Params("id")
 		e, User := database.GetUser(id)
 		if e != nil {
@@ -136,6 +176,13 @@ func main() {
 			"message": "Deletion was successful",
 		})
 
+	})
+
+	//Not fully implemented
+	//TODO: Finish Logout
+	app.Post("/user/logout", func(c *fiber.Ctx) error {
+		store.Reset()
+		return c.SendString("Logout")
 	})
 
 	app.Listen(":8081")

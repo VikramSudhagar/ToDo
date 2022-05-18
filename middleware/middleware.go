@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"todo/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,10 +14,11 @@ func middleware() {
 	app.Use("/task", basicauth.New(basicauth.Config{
 		Realm: "Forbidden",
 		Authorizer: func(user, pass string) bool {
-			currentUser := database.VerifyUser(user, pass)
+			currentUser, err := database.VerifyUser(user, pass)
 			if user == currentUser.Email && pass == currentUser.Password {
 				return true
 			}
+			log.Println("There error was: ", err)
 			return false
 		},
 		Unauthorized: func(c *fiber.Ctx) error {
