@@ -178,5 +178,12 @@ func main() {
 
 	})
 
+	//Not fully implemented
+	//TODO: Finish Logout
+	app.Post("/user/logout", func(c *fiber.Ctx) error {
+		store.Reset()
+		return c.SendString("Logout")
+	})
+
 	app.Listen(":8081")
 }
