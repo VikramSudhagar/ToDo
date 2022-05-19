@@ -4,5 +4,5 @@ COPY . /app
 WORKDIR /app
 RUN go mod download
 EXPOSE 8081
-RUN go build -o todo /app/controllers/app.go
+RUN go build -o todo /app/app.go
 CMD ["/app/todo"]

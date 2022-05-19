@@ -18,6 +18,10 @@ func main() {
 	database.TaskSetUp()
 	database.UserSetUp()
 
+	app.Static("/login", "./view", fiber.Static{
+		Index: "login.html",
+	})
+
 	app.Get("/welcome", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome")
 	})
