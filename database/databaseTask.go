@@ -4,6 +4,8 @@ import (
 	"log"
 	"todo/models"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/jinzhu/copier"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -45,13 +47,35 @@ func AddTask(taskname string) (*models.Task, error) {
 	return task, nil
 }
 
-func DeleteTask(id int) error {
+func getTask(id int, c *fiber.Ctx) models.DTO_Task {
+	db := DBConn
+	task := models.Task{}
+	result := models.DTO_Task{}
+	db.First(&task, id)
+	copier.Copy(&result, &task)
+	log.Println("The result value is: ", result)
+	return result
+}
+
+func DeleteTask(id int, c *fiber.Ctx) error {
 	db := DBConn
 	//delete the task with that specific ID. Every task has
 	//a primary key, so a Batch Delete will not be triggered
+
+	// isDeleted := c.JSON(getTask(id, c).DeletedAt)
+	// log.Println("isDeleted value is: ", isDeleted)
+	// if isDeleted == nil {
+	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	// 		"success": false,
+	// 		"Error":   "Resoruce not found",
+	// 	})
+	// }
+
 	if err := db.Delete(&models.Task{}, id).Error; err != nil {
-		log.Println("Deletion was not successful")
-		return err
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"Error":   "Deletion was not successful",
+		})
 	}
 	log.Println("Deletion was successful")
 	return nil

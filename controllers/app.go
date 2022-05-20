@@ -3,18 +3,21 @@ package main
 import (
 	"log"
 	"strconv"
+	"time"
 	"todo/database"
 	"todo/database/cache"
 	"todo/middleware"
 	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/jinzhu/copier"
 )
 
 func main() {
 	app := fiber.New()
 	store := cache.CacheSetUp()
+	session := session.New()
 	database.TaskSetUp()
 	database.UserSetUp()
 
@@ -41,7 +44,15 @@ func main() {
 				"Error":   "Invalid Input",
 			})
 		}
-		store.Set("session", []byte(value), 0)
+		cookie := new(fiber.Cookie)
+		cookie.Name = "sessionID"
+		cookie.Value = string(session.KeyGenerator())
+		//Session Token will expire in 24 hours
+		cookie.Expires = time.Now().Add(24 * time.Hour)
+
+		//Setting the Cookie
+		c.Cookie(cookie)
+		store.Set(cookie.Value, []byte(value), 0)
 		return c.SendString("Hello, World!")
 	})
 
@@ -61,7 +72,7 @@ func main() {
 	app.Post("/task", func(c *fiber.Ctx) error {
 		//RetrieveSessionAndVerify we check whether the information in the
 		//session is valid, and will then verify if this user exists in the DB
-		err := middleware.RetrieveSessionAndVerify(store, c)
+		err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID"))
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
@@ -98,7 +109,7 @@ func main() {
 
 	//Deleting a Task from the to do list
 	app.Delete("/task/:id", func(c *fiber.Ctx) error {
-		if err := middleware.RetrieveSessionAndVerify(store, c); err != nil {
+		if err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID")); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
 				"Error":   err,
@@ -112,10 +123,10 @@ func main() {
 			return e
 		}
 
-		if err := database.DeleteTask(id); err != nil {
+		if err := database.DeleteTask(id, c); err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"success": false,
-				"message": "Resource not found",
+				"message": err,
 			})
 		}
 
