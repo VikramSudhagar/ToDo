@@ -25,6 +25,7 @@ require (
 )
 
 require (
+	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gofiber/storage/redis v0.0.0-20220517063545-debcd269971f

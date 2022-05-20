@@ -32,7 +32,10 @@ func main() {
 		}
 
 		if _, err := database.VerifyUser(user.Email, user.Password); err != nil {
-			return err
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"Error":   "User not found",
+			})
 		}
 		//When logging in, the username and password will be stored in redis
 		value := "email: " + user.Email + " password: " + user.Password
@@ -53,7 +56,10 @@ func main() {
 		//Setting the Cookie
 		c.Cookie(cookie)
 		store.Set(cookie.Value, []byte(value), 0)
-		return c.SendString("Hello, World!")
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success": true,
+			"Message": "Login Successful",
+		})
 	})
 
 	var todo []models.Task = make([]models.Task, 0)
