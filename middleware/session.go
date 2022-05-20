@@ -9,22 +9,23 @@ import (
 	"github.com/gofiber/storage/redis"
 )
 
-func RetrieveSession(store *redis.Storage) (string, string, error) {
-	answer, err := store.Get("session")
+func RetrieveSession(store *redis.Storage, key string) (string, string, error) {
+	answer, err := store.Get(key)
 	if err != nil || len(string(answer)) == 0 {
 		log.Println("There was a problem retrieving information from the session")
 		return "", "", fiber.NewError(fiber.StatusBadRequest, "Invalid Response")
 	} else {
 		credentials := string(answer)
 		stringArray := strings.Fields(credentials)
+		log.Println("Email: ", stringArray[1], " Password: ", stringArray[3])
 		return stringArray[1], stringArray[3], nil
 	}
 }
 
 //TODO: Hash the passwords in the database and session with Argon2Id
 //RetrieveSessionAndVerify function is currently only being used with "/task" endpoints
-func RetrieveSessionAndVerify(store *redis.Storage, c *fiber.Ctx) error {
-	email, password, e := RetrieveSession(store)
+func RetrieveSessionAndVerify(store *redis.Storage, c *fiber.Ctx, key string) error {
+	email, password, e := RetrieveSession(store, key)
 	if e != nil {
 		return e
 	}
