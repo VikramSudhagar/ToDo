@@ -61,17 +61,30 @@ func main() {
 			"Message": "Login Successful",
 		})
 	})
-
-	var todo []models.Task = make([]models.Task, 0)
-	//Get all the tasks to do
-
+	//Get the User's tasks
 	app.Get("/task", func(c *fiber.Ctx) error {
-		todo = database.GetTasks()
-		if c.Response().StatusCode() == 200 {
-			return c.JSON(todo)
+		user, err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID"))
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"error":   err,
+			})
+		}
+		var DTO_Response []models.DTO_Task = make([]models.DTO_Task, 0)
+		DTO_Response, e := database.GetTaskbyUserID(user.ID)
+		log.Println("The size of the DTO Response is: ", len(DTO_Response))
+		if e != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"error":   e,
+			})
 		}
 
-		return fiber.NewError(c.Response().StatusCode(), "There was an Error")
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success":  true,
+			"Response": DTO_Response,
+		})
+
 	})
 
 	//Adding a Task to the to do list
