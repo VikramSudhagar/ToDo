@@ -53,7 +53,6 @@ func getTask(id int, c *fiber.Ctx) models.DTO_Task {
 	result := models.DTO_Task{}
 	db.First(&task, id)
 	copier.Copy(&result, &task)
-	log.Println("The result value is: ", result)
 	return result
 }
 
