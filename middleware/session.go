@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 	"todo/database"
+	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/storage/redis"
@@ -24,19 +25,20 @@ func RetrieveSession(store *redis.Storage, key string) (string, string, error) {
 
 //TODO: Hash the passwords in the database and session with Argon2Id
 //RetrieveSessionAndVerify function is currently only being used with "/task" endpoints
-func RetrieveSessionAndVerify(store *redis.Storage, c *fiber.Ctx, key string) error {
+func RetrieveSessionAndVerify(store *redis.Storage, c *fiber.Ctx, key string) (models.User, error) {
 	email, password, e := RetrieveSession(store, key)
 	if e != nil {
-		return e
+		return models.User{}, e
 	}
 
 	//Verify whether the information in the session storage is valid or not
-	if _, err := database.VerifyUser(email, password); err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	user, err := database.VerifyUser(email, password)
+	if err != nil {
+		return user, c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"Error":   err,
 		})
 	}
 
-	return nil
+	return user, nil
 }

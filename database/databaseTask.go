@@ -31,10 +31,11 @@ func GetTasks() []models.Task {
 	return tasks
 }
 
-func AddTask(taskname string) (*models.Task, error) {
+func AddTask(taskname string, userID uint) (*models.Task, error) {
 	db := DBConn
 	task := &models.Task{
 		TaskName: taskname,
+		UserID:   userID,
 	}
 
 	log.Println("The memory address is: ", &task)

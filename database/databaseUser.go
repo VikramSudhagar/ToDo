@@ -48,6 +48,7 @@ func VerifyUser(email string, password string) (models.User, error) {
 	return user, nil
 }
 
+//Get User through the UserID
 func GetUser(id string) (error, models.User) {
 	db := UserDBConn
 	var user models.User
