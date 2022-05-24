@@ -210,11 +210,17 @@ func main() {
 
 	})
 
-	//Not fully implemented
-	//TODO: Finish Logout
 	app.Post("/user/logout", func(c *fiber.Ctx) error {
-		store.Reset()
-		return c.SendString("Logout")
+		cookie := new(fiber.Cookie)
+		cookie.Name = "sessionID"
+		cookie.Value = c.Cookies("sessionID")
+		cookie.Expires = time.Now().Add(-100 * time.Hour)
+		c.Cookie(cookie)
+		store.Delete(c.Cookies("sessionID"))
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"success": true,
+			"Message": "Logout was successful",
+		})
 	})
 
 	app.Listen(":8081")
