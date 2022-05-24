@@ -100,16 +100,9 @@ func main() {
 			})
 		}
 
-		result := &models.Task{}
-		if err := copier.Copy(&result, &addTask); err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"success": false,
-				"message": "cannot map results",
-			})
-		}
 		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 			"success": true,
-			"data":    result,
+			"data":    addTask,
 		})
 	})
 
@@ -153,9 +146,18 @@ func main() {
 			})
 		}
 
+		DTO_User := &models.DTO_User{}
+
+		if err := copier.Copy(&DTO_User, &User); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"success": false,
+				"message": "Cannot map results",
+			})
+		}
+
 		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
 			"success": true,
-			"user":    User,
+			"user":    DTO_User,
 		})
 	})
 

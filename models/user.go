@@ -7,3 +7,8 @@ type User struct {
 	Email    string
 	Password string
 }
+
+type DTO_User struct {
+	ID    uint
+	Email string
+}

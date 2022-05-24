@@ -12,4 +12,5 @@ type Task struct {
 type DTO_Task struct {
 	ID        uint           `gorm:"primary_key" json:"id"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
+	TaskName  string         `json:"taskname"`
 }
