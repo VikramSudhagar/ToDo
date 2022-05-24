@@ -78,7 +78,7 @@ func main() {
 	app.Post("/task", func(c *fiber.Ctx) error {
 		//RetrieveSessionAndVerify we check whether the information in the
 		//session is valid, and will then verify if this user exists in the DB
-		err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID"))
+		user, err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID"))
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
@@ -92,7 +92,7 @@ func main() {
 			return err
 		}
 
-		addTask, err := database.AddTask(body.TaskName)
+		addTask, err := database.AddTask(body.TaskName, user.ID)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"success": false,
@@ -108,7 +108,7 @@ func main() {
 
 	//Deleting a Task from the to do list
 	app.Delete("/task/:id", func(c *fiber.Ctx) error {
-		if err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID")); err != nil {
+		if _, err := middleware.RetrieveSessionAndVerify(store, c, c.Cookies("sessionID")); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
 				"Error":   err,

@@ -7,6 +7,7 @@ import (
 type Task struct {
 	gorm.Model
 	TaskName string `json:"taskname"`
+	UserID   uint
 }
 
 type DTO_Task struct {
