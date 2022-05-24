@@ -24,6 +24,7 @@ func TaskSetUp() {
 	}
 }
 
+//Get All Tasks
 func GetTasks() []models.Task {
 	var tasks []models.Task
 	db := DBConn
@@ -46,6 +47,18 @@ func AddTask(taskname string, userID uint) (*models.Task, error) {
 	db.Create(&task)
 
 	return task, nil
+}
+
+func GetTaskbyUserID(userID uint) ([]models.DTO_Task, error) {
+	db := DBConn
+	log.Println("The userID is: ", userID)
+	var tasks []models.Task
+	results := []models.DTO_Task{}
+	if err := db.Where("user_id= ?", userID).Find(&tasks).Error; err != nil {
+		return results, err
+	}
+	copier.Copy(&results, &tasks)
+	return results, nil
 }
 
 func getTask(id int, c *fiber.Ctx) models.DTO_Task {
