@@ -21,6 +21,7 @@ func TaskSetUp() {
 		DBConn.AutoMigrate(models.Task{})
 	} else {
 		log.Println("The error is: ", err)
+		DBConn.AutoMigrate(models.Task{})
 	}
 }
 

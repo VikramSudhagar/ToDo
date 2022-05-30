@@ -15,7 +15,7 @@ function newElement() {
         body: JSON.stringify(data)
     }).then((res) => {
         res.json().then(json => {
-            if (json.success) {
+            if (json.success && task != "") {
                 //Update the UI
 
                 //Reset the search bar
@@ -34,7 +34,16 @@ function appendTask(task, id){
     var li = document.createElement("li");
     li.setAttribute('id', id)
     li.addEventListener('click', function(){
+        //if the element is selected two times, remove it from the array
         selectElement(id)
+    })
+    li.addEventListener('click', function(){
+        var li = document.getElementById(id)
+        if(li.style.backgroundColor == "rgb(136, 136, 136)"){
+            li.style.backgroundColor = "#eeeeee"
+        } else {
+            li.style.backgroundColor = "#888888"
+        }
     })
     li.appendChild(document.createTextNode(task));
     ul.appendChild(li)
@@ -67,7 +76,13 @@ function deleteElement(){
 
 function selectElement(id){
     //Push the id to the global array
-    selectedElements.push(id)
+    if(selectedElements.includes(id)){
+        //remove the element
+        selectedElements = selectedElements.filter(item => item !== id)
+        console.log(selectedElements)
+    } else {
+        selectedElements.push(id)
+    }
 }
 
 //TODO: Upon logout all the global elements need to be cleared

@@ -20,6 +20,7 @@ func UserSetUp() {
 		UserDBConn.AutoMigrate(models.User{})
 	} else {
 		log.Println("The error is: ", err)
+		UserDBConn.AutoMigrate(models.User{})
 	}
 }
 
