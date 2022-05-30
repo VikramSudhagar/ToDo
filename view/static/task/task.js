@@ -17,8 +17,13 @@ function newElement() {
         res.json().then(json => {
             if (json.success) {
                 //Update the UI
+
+                //Reset the search bar
+                document.getElementById("myInput").value = ''
                 var id = json.data.ID.toString()
                 appendTask(task, id)
+            } else {
+                alert("There was a problem adding the task, please try again later")
             }
         })
     })
