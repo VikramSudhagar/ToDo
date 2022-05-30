@@ -1,10 +1,8 @@
-* {
-    box-sizing: border-box;
-}
 
 ul {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 ul li {
@@ -14,16 +12,19 @@ ul li {
     background: #eee;
     font-size: 18px;
     transition: 0.2s;
+    box-sizing: border-box;
 }
 
 ul li:hover {
-    background: #ddd
+    background: #ddd;
+    box-sizing: border-box;
 }
 
 ul li.checked {
     background: #888;
     color: #fff;
     text-decoration: line-through;
+    box-sizing: border-box;
 }
 
 ul li.checked::before{
@@ -36,7 +37,8 @@ ul li.checked::before{
     left: 16px;
     transform: rotate(45deg);
     height: 15px;
-    width: 7px;  
+    width: 7px; 
+    box-sizing: border-box; 
 }
 
 .close {
@@ -44,30 +46,34 @@ ul li.checked::before{
     right: 0;
     top: 0;
     padding: 12px 16px 12px 16px;
+    box-sizing: border-box;
   }
-  
-  .close:hover {
+
+.close:hover {
     background-color: #f44336;
     color: white;
+    box-sizing: border-box;
   }
   
   /* Style the header */
-  .header {
+.header {
     background-color: #229ad2;
     padding: 30px 40px;
     color: white;
     text-align: center;
+    box-sizing: border-box;
   }
   
   /* Clear floats after the header */
-  .header:after {
+.header:after {
     content: "";
     display: table;
     clear: both;
+    box-sizing: border-box;
   }
   
   /* Style the input */
-  input {
+input {
     position: absolute;
     right: 35%;
     margin: 0;
@@ -77,10 +83,11 @@ ul li.checked::before{
     padding: 10px;
     float: left;
     font-size: 16px;
+    box-sizing: border-box;
   }
   
   /* Style the "Add" button */
-  .addBtn {
+.addBtn {
     margin-left: 100px;
     padding: 10px;
     width: 10%;
@@ -92,6 +99,7 @@ ul li.checked::before{
     cursor: pointer;
     transition: 0.3s;
     border-radius: 0;
+    box-sizing: border-box;
   }
 
   .deleteBtn{
@@ -106,12 +114,15 @@ ul li.checked::before{
     cursor: pointer;
     transition: 0.3s;
     border-radius: 0;
+    box-sizing: border-box;
   }
   
   .addBtn:hover {
     background-color: #bbb;
+    box-sizing: border-box;
   }
 
   .deleteBtn:hover {
       background-color: #bbb;
+      box-sizing: border-box;
   }

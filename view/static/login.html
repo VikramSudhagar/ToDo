@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script type = "text/javascript" src = "login.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <form onsubmit="submitButton(); return false">
+        <div class = "container">
+            <label for="email"><b>Email</b></label>
+            <input type="text" id = "input_email" placeholder="Enter Email" required>
+
+            <label for="psw"> <b>Password</b></label>
+            <input type="password" id = "input_password" placeholder="Enter Password" required>
+
+            <button type = "submit"> Login </button>
+        </div>
+    </form>
+</body>
+</html>

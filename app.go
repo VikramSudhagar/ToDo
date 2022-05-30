@@ -21,8 +21,12 @@ func main() {
 	database.TaskSetUp()
 	database.UserSetUp()
 
-	app.Static("/login", "./view", fiber.Static{
+	app.Static("/", "./view/static", fiber.Static{
 		Index: "login.html",
+	})
+
+	app.Static("/", "./view/static/task", fiber.Static{
+		Index: "todo.html",
 	})
 
 	app.Get("/welcome", func(c *fiber.Ctx) error {
@@ -102,7 +106,6 @@ func main() {
 				"Error":   err,
 			})
 		}
-
 		var body models.Task
 		//Check if there was an error with parsing the body of the request
 		if err := c.BodyParser(&body); err != nil {
@@ -178,7 +181,7 @@ func main() {
 		})
 	})
 
-	app.Post("/addUser", func(c *fiber.Ctx) error {
+	app.Post("/signup", func(c *fiber.Ctx) error {
 		var user models.User
 		if err := c.BodyParser(&user); err != nil {
 			log.Println("Could not add the user")
