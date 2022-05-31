@@ -48,6 +48,7 @@ function appendTask(task, id){
     li.appendChild(document.createTextNode(task));
     ul.appendChild(li)
 }
+
 //id needs to be a string value
 function deleteElement(){
     //The following removes the element from the UI
@@ -79,7 +80,6 @@ function selectElement(id){
     if(selectedElements.includes(id)){
         //remove the element
         selectedElements = selectedElements.filter(item => item !== id)
-        console.log(selectedElements)
     } else {
         selectedElements.push(id)
     }

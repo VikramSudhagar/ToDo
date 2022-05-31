@@ -29,6 +29,10 @@ func main() {
 		Index: "todo.html",
 	})
 
+	app.Static("/", "./view/static/signup", fiber.Static{
+		Index: "signup.html",
+	})
+
 	app.Get("/welcome", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome")
 	})
