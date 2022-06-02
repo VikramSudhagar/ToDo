@@ -15,9 +15,19 @@
         <input type="text" id="myInput" placeholder="Enter Your Task">
         <span onclick="newElement()" class="addBtn">Add</span>
         <span onclick = "deleteElement()" class = "deleteBtn">Delete</span>
+        <span onclick="logoutModal()" class = "logout" >Logout</span>
       </div>
       
       <ul id="tasks">
       </ul>
+
+      <div id = "modal-logout" class = "modal">
+        <div class = "modalText">
+        <b> Are you sure you want to logout?</b>
+        </div>
+        
+        <button id="logout-yes" onclick="modalYes()" class = "modalButton"><b>Yes</b></button>
+        <button id = "logout-no" onclick="modalNo()" class = "modalButton"><b>No</b></button>
+    </div>
 </body>
 </html>

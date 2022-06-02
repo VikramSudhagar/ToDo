@@ -89,3 +89,28 @@ function selectElement(id){
 
 //TODO: When adding a task, the search bar should be cleared
 
+function logoutModal(){
+    var modal = document.getElementById("modal-logout")
+    modal.style.display = "block"
+}
+
+function modalYes() {
+    fetch('/logout', {
+        method: "POST", 
+        headers: {
+            'Content-Type' : 'application/json'
+        } 
+    }).then(response => response.json()).then((value) => {
+        if (value.success) {
+            window.location.href = "/login.html"
+        } else {
+            alert("There was an error logging out, please try again")
+        }
+    })
+    
+}
+
+function modalNo() {
+    var modal = document.getElementById("modal-logout")
+    modal.style.display = "none"
+}

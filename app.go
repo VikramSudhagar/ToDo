@@ -221,7 +221,7 @@ func main() {
 
 	})
 
-	app.Post("/user/logout", func(c *fiber.Ctx) error {
+	app.Post("/logout", func(c *fiber.Ctx) error {
 		cookie := new(fiber.Cookie)
 		cookie.Name = "sessionID"
 		cookie.Value = c.Cookies("sessionID")
