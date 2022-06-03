@@ -16,9 +16,7 @@ function submitButton(){
                 body: JSON.stringify(data)
             }).then(response => response.json()).then(value => {
                 if(value.success) {
-                    console.log("The sign up was successful")
-                    console.log("The value of value is: " + value)
-                    window.location.href = "/todo.html"
+                    window.location.href = "/task"
                 } else {
                     alert("There was an error with signing up, please try again")
                 }
