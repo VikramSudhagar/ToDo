@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script type = "text/javascript" src = "task.js"></script>
+    <title>ToDo App</title>
+    <script type = "text/javascript" src = "/static/task.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-    <link rel = "stylesheet" href = "task.css">
+    <link rel = "stylesheet" href = "/static/task.css">
 </head>
 <body>
     <div id = "taskHeader", class = "header">
@@ -19,6 +19,9 @@
       </div>
       
       <ul id="tasks">
+        {{range .DTO_Response}}
+        <li id = {{.ID}} onclick = "selectedElement(this.id)">{{ .TaskName }}</li>
+        {{end}}
       </ul>
 
       <div id = "modal-logout" class = "modal">

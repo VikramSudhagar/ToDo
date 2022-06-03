@@ -10,17 +10,22 @@ function submitButton() {
         body: JSON.stringify(data)
     }).then((value) => {
         value.json().then((res) => {
-            console.log(res)
-            console.log("The value of success is: " + res.success)
             if(res.success){
-                //login
-                window.location.href = "/todo.html"
+                window.location.href = "/task"
+                getTasks()
             } else {
                 //send an error message
                 alert("There is an error. Try again")
             }
         })
     })
+} 
 
-    return false;
+function getTasks(){
+    fetch("/task", {
+        method: "GET", 
+        headers: {
+            'Content-Type' : 'application/json'
+        }
+    })
 }

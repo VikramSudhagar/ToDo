@@ -5,7 +5,6 @@ var selectedElements =[]
 
 function newElement() {
     task = document.getElementById("myInput").value
-    console.log("The value of task is: " + task)
     const data = {TaskName: task}
     fetch('/task' , {
         method: 'POST', 
@@ -32,21 +31,10 @@ function newElement() {
 function appendTask(task, id){
     var ul = document.getElementById("tasks");
     var li = document.createElement("li");
-    li.setAttribute('id', id)
-    li.addEventListener('click', function(){
-        //if the element is selected two times, remove it from the array
-        selectElement(id)
-    })
-    li.addEventListener('click', function(){
-        var li = document.getElementById(id)
-        if(li.style.backgroundColor == "rgb(136, 136, 136)"){
-            li.style.backgroundColor = "#eeeeee"
-        } else {
-            li.style.backgroundColor = "#888888"
-        }
-    })
+    li.setAttribute('id', id);
     li.appendChild(document.createTextNode(task));
     ul.appendChild(li)
+    li.setAttribute('onclick', 'selectedElement(id)');
 }
 
 //id needs to be a string value
@@ -56,7 +44,6 @@ function deleteElement(){
     for(let i = 0; i < selectedElements.length; i++) {
         //fetch call, to see if you can delete the element
         var id = selectedElements[i]
-        console.log("The value of the ID is: " + id)
         fetch('/task/' + id, {
             method: 'DELETE',
             headers: {
@@ -74,20 +61,7 @@ function deleteElement(){
         })
     }
 }
-
-function selectElement(id){
-    //Push the id to the global array
-    if(selectedElements.includes(id)){
-        //remove the element
-        selectedElements = selectedElements.filter(item => item !== id)
-    } else {
-        selectedElements.push(id)
-    }
-}
-
 //TODO: Upon logout all the global elements need to be cleared
-
-//TODO: When adding a task, the search bar should be cleared
 
 function logoutModal(){
     var modal = document.getElementById("modal-logout")
@@ -102,7 +76,7 @@ function modalYes() {
         } 
     }).then(response => response.json()).then((value) => {
         if (value.success) {
-            window.location.href = "/login.html"
+            window.location.href = "/"
         } else {
             alert("There was an error logging out, please try again")
         }
@@ -113,4 +87,27 @@ function modalYes() {
 function modalNo() {
     var modal = document.getElementById("modal-logout")
     modal.style.display = "none"
+}
+
+//Render the tasks upon login
+function getTasks(){
+    fetch("/task", {
+        method: "GET", 
+        headers: {
+            'Content-Type' : 'application/json'
+        }
+    })
+}
+
+function selectedElement(ID) {
+    var li = document.getElementById(ID)
+
+        if(li.style.backgroundColor == "rgb(136, 136, 136)"){
+            li.style.backgroundColor = "#eeeeee"
+            selectedElements = selectedElements.filter(item => item !== ID)
+        }  else {
+            li.style.backgroundColor = "#888888"
+            selectedElements.push(ID)
+        }
+        
 }

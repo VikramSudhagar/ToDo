@@ -11,31 +11,27 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/gofiber/template/html"
 	"github.com/jinzhu/copier"
 )
 
 func main() {
-	app := fiber.New()
+	engine := html.New("./views", ".html")
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
+
 	store := cache.CacheSetUp()
 	session := session.New()
 	database.TaskSetUp()
 	database.UserSetUp()
 
-	app.Static("/", "./view/static", fiber.Static{
-		Index: "login.html",
+	app.Static("/", "./views", fiber.Static{
+		Index: "index.html",
 	})
 
-	app.Static("/", "./view/static/task", fiber.Static{
-		Index: "todo.html",
-	})
-
-	app.Static("/", "./view/static/signup", fiber.Static{
-		Index: "signup.html",
-	})
-
-	app.Get("/welcome", func(c *fiber.Ctx) error {
-		return c.SendString("Welcome")
-	})
+	app.Static("/static", "./static")
 
 	app.Post("/login", func(c *fiber.Ctx) error {
 		var user models.User
@@ -82,9 +78,9 @@ func main() {
 				"error":   err,
 			})
 		}
-		var DTO_Response []models.DTO_Task = make([]models.DTO_Task, 0)
-		DTO_Response, e := database.GetTaskbyUserID(user.ID)
-		log.Println("The size of the DTO Response is: ", len(DTO_Response))
+		var DTO_Response_Array []models.DTO_Task = make([]models.DTO_Task, 0)
+		DTO_Response_Array, e := database.GetTaskbyUserID(user.ID)
+
 		if e != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
@@ -92,11 +88,9 @@ func main() {
 			})
 		}
 
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"success":  true,
-			"Response": DTO_Response,
+		return c.Render("todo", fiber.Map{
+			"DTO_Response": DTO_Response_Array,
 		})
-
 	})
 
 	//Adding a Task to the to do list
