@@ -22,8 +22,6 @@ func RetrieveSession(store *redis.Storage, key string) (string, string, error) {
 	}
 }
 
-//TODO: Hash the passwords in the database and session with Argon2Id
-//RetrieveSessionAndVerify function is currently only being used with "/task" endpoints
 func RetrieveSessionAndVerify(store *redis.Storage, c *fiber.Ctx, key string) (models.User, error) {
 	email, password, e := RetrieveSession(store, key)
 	if e != nil {
