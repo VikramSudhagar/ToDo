@@ -53,7 +53,6 @@ func AddTask(taskname string, userID uint) (*models.Task, error) {
 
 func GetTaskbyUserID(userID uint) ([]models.DTO_Task, error) {
 	db := DBConn
-	log.Println("The userID is: ", userID)
 	var tasks []models.Task
 	results := []models.DTO_Task{}
 	if err := db.Where("user_id= ?", userID).Find(&tasks).Error; err != nil {
