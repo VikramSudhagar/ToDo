@@ -13,11 +13,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html"
 	"github.com/jinzhu/copier"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	engine := html.New("./views", ".html")
-
+	err := godotenv.Load("local.env")
+	if err != nil {
+		log.Println("Error loading .env file, the error was: ", err)
+	}
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})

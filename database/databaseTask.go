@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"os"
 	"todo/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,7 +15,7 @@ var DBConn *gorm.DB
 var err error
 
 func TaskSetUp() {
-	dsn := "host=host.docker.internal user=postgres password=mypassword dbname=todoDB port=5432"
+	dsn := "host=host.docker.internal user=" + os.Getenv("USER") + " password=" + os.Getenv("PASSWORD") + " dbname=" + os.Getenv("DBNAME") + " port=5432"
 	DBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err == nil {
 		log.Println("DB Connection was successful")
@@ -40,9 +41,9 @@ func AddTask(taskname string, userID uint) (*models.Task, error) {
 		UserID:   userID,
 	}
 
-	log.Println("The memory address is: ", &task)
 	if &task == nil {
 		log.Println("The value is nil")
+		return &models.Task{}, nil
 	}
 
 	db.Create(&task)
@@ -91,6 +92,5 @@ func DeleteTask(id int, c *fiber.Ctx) error {
 			"Error":   "Deletion was not successful",
 		})
 	}
-	log.Println("Deletion was successful")
 	return nil
 }

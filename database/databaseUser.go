@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"log"
+	"os"
 	"todo/models"
 
 	"github.com/alexedwards/argon2id"
@@ -13,7 +14,7 @@ import (
 var UserDBConn *gorm.DB
 
 func UserSetUp() {
-	dsn := "host=host.docker.internal user=postgres password=mypassword dbname=todoDB port=5432"
+	dsn := "host=host.docker.internal user=" + os.Getenv("USER") + " password=" + os.Getenv("PASSWORD") + " dbname=" + os.Getenv("DBNAME") + " port=5432"
 	UserDBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err == nil {
 		log.Println("DB Connection was successful for UserSetUp")
@@ -40,10 +41,8 @@ func VerifyUser(email string, password string) (models.User, error) {
 	}
 
 	if match {
-		log.Println("User credentials are valid")
 		user = dbUser
 	} else {
-		log.Println("The user credentials are invalid")
 		return user, gorm.ErrRecordNotFound
 	}
 	return user, nil

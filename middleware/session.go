@@ -18,7 +18,6 @@ func RetrieveSession(store *redis.Storage, key string) (string, string, error) {
 	} else {
 		credentials := string(answer)
 		stringArray := strings.Fields(credentials)
-		log.Println("Email: ", stringArray[1], " Password: ", stringArray[3])
 		return stringArray[1], stringArray[3], nil
 	}
 }
