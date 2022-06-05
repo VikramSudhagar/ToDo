@@ -5,7 +5,7 @@ security for the user passwords. Currently, the user has the option to add and d
 
 ***
 
-##Commands to Run the ToDo App
+## Commands to Run the ToDo App
 To run the ToDo app, pass the following docker commands: 
 
 **docker-compose up -d --build**
