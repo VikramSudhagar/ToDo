@@ -61,7 +61,10 @@ func GetUser(id string) (error, models.User) {
 
 func AddUser(user models.User) error {
 	db := UserDBConn
-	log.Println("The user value is:", user)
+	if err := db.First(&user).Error; err == nil {
+		//If there are no errors, then the user already exists
+		return errors.New("An account with that email already exists")
+	}
 	//Hash the password with argon2id
 	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
 	if err != nil {
@@ -71,7 +74,6 @@ func AddUser(user models.User) error {
 	if err := db.Create(&user); err != nil {
 		return err.Error
 	}
-	log.Println("Adding User was successful")
 	return nil
 }
 

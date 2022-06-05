@@ -80,10 +80,12 @@ func SignUp(c *fiber.Ctx) error {
 		log.Println("Could not add the user")
 	}
 
+	//First check whether the User has already been created
+
 	if err := database.AddUser(user); err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
-			"message": "User not found",
+			"message": err,
 		})
 	} else {
 		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
